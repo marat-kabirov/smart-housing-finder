@@ -30,7 +30,11 @@ const scrape = async () => {
       const priceMatch = priceRaw.match(/(\d+[\.,]?\d*)/);
       const price = priceMatch ? parseInt(priceMatch[1].replace(',', '')) : null;
 
-      if (title && url) {
+      const isSearch = title.toLowerCase().includes('suche') || 
+                 title.toLowerCase().includes('gesucht');
+      const isBadPrice = price !== null && price < 50;
+
+      if (title && url && !isSearch && !isBadPrice) {
         results.push({
           title,
           price,
@@ -47,7 +51,7 @@ const scrape = async () => {
   });
 
   await browser.close();
-  console.log(`Найдено объявлений: ${listings.length}`);
+  console.log(`Kleinanzeigen: ${listings.length}`);
   return listings;
 };
 

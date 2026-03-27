@@ -1,9 +1,19 @@
-function ListingCard({ listing }) {
+function ListingCard({ listing, token, isFavorite, onFavoriteToggle }) {
   return (
     <div className="listing-card">
       <div className="listing-card__header">
         <span className="listing-card__source">{listing.source}</span>
-        {listing.price && <span className="listing-card__price">{listing.price} €</span>}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          {listing.price && <span className="listing-card__price">{listing.price} €</span>}
+          {token && (
+            <button
+              className={`favorite-btn ${isFavorite ? 'active' : ''}`}
+              onClick={() => onFavoriteToggle(listing.id)}
+            >
+              {isFavorite ? '❤️' : '🤍'}
+            </button>
+          )}
+        </div>
       </div>
       <h3 className="listing-card__title">{listing.title}</h3>
       <div className="listing-card__details">
