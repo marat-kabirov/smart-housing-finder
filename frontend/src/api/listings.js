@@ -46,3 +46,12 @@ export const removeFavorite = async (token, listingId) => {
   });
   return res.json();
 };
+
+export const generateResponse = async (listing) => {
+  const res = await fetch(`${BASE_URL}/ai/generate-response`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(listing),
+  });
+  return res.json();
+};

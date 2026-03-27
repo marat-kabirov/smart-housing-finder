@@ -1,4 +1,19 @@
+import { useState } from 'react';
+import { generateResponse } from '../api/listings';
+
 function ListingCard({ listing, token, isFavorite, onFavoriteToggle }) {
+  const [aiMessage, setAiMessage] = useState('');
+  const [loadingAI, setLoadingAI] = useState(false);
+  const [showAI, setShowAI] = useState(false);
+
+  const handleGenerateResponse = async () => {
+    setLoadingAI(true);
+    setShowAI(true);
+    const data = await generateResponse(listing);
+    setAiMessage(data.message || data.error);
+    setLoadingAI(false);
+  };
+
   return (
     <div className="listing-card">
       <div className="listing-card__header">
@@ -21,9 +36,32 @@ function ListingCard({ listing, token, isFavorite, onFavoriteToggle }) {
         {listing.rooms && <span>🚪 {listing.rooms} Zimmer</span>}
         {listing.size_sqm && <span>📐 {listing.size_sqm} m²</span>}
       </div>
-      <a href={listing.url} target="_blank" rel="noreferrer" className="listing-card__link">
-        Anzeige ansehen →
-      </a>
+      <div className="listing-card__footer">
+        <a href={listing.url} target="_blank" rel="noreferrer" className="listing-card__link">
+          Anzeige ansehen →
+        </a>
+        <button className="btn-ai" onClick={handleGenerateResponse}>
+          ✨ Anschreiben
+        </button>
+      </div>
+      {showAI && (
+        <div className="ai-message">
+          <div className="ai-message__header">
+            <span>✨ KI-Anschreiben</span>
+            <button onClick={() => setShowAI(false)}>✕</button>
+          </div>
+          {loadingAI ? (
+            <p className="ai-loading">Wird generiert...</p>
+          ) : (
+            <>
+              <p className="ai-text">{aiMessage}</p>
+              <button className="btn-copy" onClick={() => navigator.clipboard.writeText(aiMessage)}>
+                📋 Kopieren
+              </button>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
